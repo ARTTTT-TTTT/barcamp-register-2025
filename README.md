@@ -50,84 +50,6 @@ A full-stack web application for managing event registration with user authentic
 - **ESLint** - Code quality and standards
 - **Prettier** - Code formatting
 
-## Project Structure
-
-```
-registration-app/
-├── client-js/                          # React frontend application
-│   ├── src/
-│   │   ├── pages/                      # Page components (routing targets)
-│   │   │   ├── AdminPage.jsx          # Admin dashboard
-│   │   │   ├── AdminConsolePage.jsx   # Admin console settings
-│   │   │   ├── FormPage.jsx           # Registration form
-│   │   │   ├── ProfilePage.jsx        # User profile
-│   │   │   ├── SpecialFormPage.jsx    # Special registration form
-│   │   │   └── SpecialRegisterPage.jsx # Special registration landing
-│   │   ├── components/                 # Reusable UI components
-│   │   │   ├── AppBar.jsx             # Navigation header
-│   │   │   ├── UserCard.jsx           # User info display
-│   │   │   ├── ConsoleCard.jsx        # Console settings card
-│   │   │   ├── Qualified.jsx          # Status: approved
-│   │   │   ├── Pending.jsx            # Status: awaiting review
-│   │   │   ├── Confirmed.jsx          # Status: confirmed
-│   │   │   ├── NotQualified.jsx       # Status: rejected
-│   │   │   ├── PDPA.jsx               # Privacy consent
-│   │   │   ├── ImageSlide.jsx         # Gallery carousel
-│   │   │   └── FogBackground.jsx      # 3D background effect
-│   │   ├── api/                        # API integration layer
-│   │   │   ├── auth.js                # Authentication endpoints
-│   │   │   ├── user.js                # User endpoints
-│   │   │   ├── admin.js               # Admin endpoints
-│   │   │   └── console.js             # Console/voting endpoints
-│   │   ├── functions/                  # Utility functions
-│   │   │   └── countDown.js           # Countdown timer logic
-│   │   ├── services/                   # Service configuration
-│   │   │   └── config.js              # API base URL config
-│   │   ├── App.jsx                     # Root component
-│   │   ├── main.jsx                    # Entry point
-│   │   └── index.css                   # Global styles
-│   ├── public/                         # Static assets
-│   │   ├── gallery/                    # Gallery images
-│   │   └── images/                     # Other images
-│   ├── vite.config.js                  # Vite configuration
-│   ├── tailwind.config.js              # Tailwind CSS setup
-│   ├── postcss.config.js               # PostCSS configuration
-│   ├── package.json                    # Frontend dependencies
-│   └── dockerfile                      # Frontend container config
-│
-├── server-js/                          # Express backend application
-│   ├── src/
-│   │   ├── controllers/                # Request handlers
-│   │   │   ├── authController.js      # Login/logout logic
-│   │   │   ├── registerController.js  # Registration handling
-│   │   │   ├── userController.js      # User profile operations
-│   │   │   ├── slipController.js      # Slip/document handling
-│   │   │   ├── getSlipController.js   # Retrieve slip data
-│   │   │   └── getEditable.js         # Editable field validation
-│   │   ├── models/                     # Mongoose schemas
-│   │   │   ├── participant.js         # Participant schema
-│   │   │   ├── console.js             # Console settings schema
-│   │   │   └── Topic.js               # Topic/voting schema
-│   │   ├── routes/                     # API endpoint definitions
-│   │   │   ├── authRoute.js           # /api/auth
-│   │   │   ├── participantRoute.js    # /api/participant
-│   │   │   ├── adminRoute.js          # /api/admin
-│   │   │   ├── ConsoleRoute.js        # /api/console
-│   │   │   └── voteRoute.js           # /api/vote
-│   │   ├── middleware/                 # Custom middleware
-│   │   │   └── sessionMiddleWare.js   # Session validation
-│   │   ├── index.js                    # Server entry point
-│   │   ├── config.js                   # Configuration
-│   │   ├── passport.js                 # Passport strategies
-│   │   └── upload.js                   # File upload config
-│   ├── package.json                    # Backend dependencies
-│   ├── dockerfile                      # Backend container config
-│   ├── .env                            # Environment variables (local)
-│   └── .env.example                    # Environment template
-│
-└── docker-compose.yml                  # Docker compose orchestration
-```
-
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
@@ -187,7 +109,7 @@ node -e "require('mongoose').connect(process.env.DATABASE_URI).then(() => consol
 npm run dev
 
 # Production
-npm start
+node src/index.js
 ```
 
 The server will start on `http://localhost:8080` (or your configured PORT).
@@ -249,29 +171,28 @@ cd server-js
 npm run dev
 
 # Start production server
-npm start
+node src/index.js
 
 # Run tests (currently a placeholder)
 npm test
 ```
 
-### Docker Commands
+### Docker Commands (Server Only)
 
 ```bash
-# Build and start both services
-docker-compose up --build
+cd server-js
 
-# Start services in background
-docker-compose up -d
+# Build and start server
+docker-compose -f dockercompose.yml up --build
 
-# Stop services
-docker-compose down
+# Start server in background
+docker-compose -f dockercompose.yml up -d
+
+# Stop server
+docker-compose -f dockercompose.yml down
 
 # View logs
-docker-compose logs -f
-
-# Rebuild containers
-docker-compose up --build --no-deps
+docker-compose -f dockercompose.yml logs -f
 ```
 
 ## API Endpoints
@@ -355,14 +276,16 @@ docker push your-registry/barcamp-client
 docker push your-registry/barcamp-server
 ```
 
-#### Deploy with Docker Compose
+#### Deploy with Docker Compose (Server)
 
 ```bash
-# Update docker-compose.yml with your images
-docker-compose -f docker-compose.yml up -d
+cd server-js
+
+# Update dockercompose.yml with your images
+docker-compose -f dockercompose.yml up -d
 
 # Verify services
-docker-compose ps
+docker-compose -f dockercompose.yml ps
 ```
 
 ### Option 3: Traditional VPS/Dedicated Server
